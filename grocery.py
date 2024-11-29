@@ -16,7 +16,8 @@ def main():
             
             for item in item_count:
                 print(f"{item_count[item]} {item}")
-
-
+            
             break
+
+
 main()
