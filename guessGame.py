@@ -5,6 +5,8 @@ def main():
     while True:
         try:
             user_number = int(input('Level: '))
+            if user_number < 0:
+                raise ValueError()
         except ValueError:
             pass
         else:
