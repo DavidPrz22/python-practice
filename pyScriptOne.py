@@ -30,4 +30,15 @@ def main():
         print("Cant divide by zero")
 
 
-main()
+def shorten(word):
+    shorten_word = ""
+
+    for char in word:
+        if not any(char == i for i in ["a","e","i","o","u"]):
+            shorten_word += char
+        
+        return shorten_word
+
+
+if __name__ == "__main__":
+    main()
