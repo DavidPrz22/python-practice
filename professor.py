@@ -1,6 +1,12 @@
 import random
 # NEED TO ADD MORE LEVELS
 
+"""
+This is 
+A
+Docstring
+"""
+
 def main():
     level = get_level()
     score = 0
@@ -52,7 +58,6 @@ def generate_integer(level):
     
     if level == 4:
         return random.randint(50, 100)
-    pass
 
 
 if __name__ == "__main__":
