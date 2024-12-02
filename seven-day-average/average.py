@@ -2,7 +2,65 @@ import csv
 import requests
 import sys
 
-states_data = [ "Alabama", "Alaska", "American Samoa", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Guam", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Puerto Rico", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virgin Islands", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming" ]
+states_data = [
+    "Alabama",
+    "Alaska",
+    "American Samoa",
+    "Arizona",
+    "Arkansas",
+    "California",
+    "Colorado",
+    "Connecticut",
+    "Delaware",
+    "District of Columbia",
+    "Florida",
+    "Georgia",
+    "Guam",
+    "Hawaii",
+    "Idaho",
+    "Illinois",
+    "Indiana",
+    "Iowa",
+    "Kansas",
+    "Kentucky",
+    "Louisiana",
+    "Maine",
+    "Maryland",
+    "Massachusetts",
+    "Michigan",
+    "Minnesota",
+    "Mississippi",
+    "Missouri",
+    "Montana",
+    "Nebraska",
+    "Nevada",
+    "New Hampshire",
+    "New Jersey",
+    "New Mexico",
+    "New York",
+    "North Carolina",
+    "North Dakota",
+    "Northern Mariana Islands",
+    "Ohio",
+    "Oklahoma",
+    "Oregon",
+    "Pennsylvania",
+    "Puerto Rico",
+    "Rhode Island",
+    "South Carolina",
+    "South Dakota",
+    "Tennessee",
+    "Texas",
+    "Utah",
+    "Vermont",
+    "Virgin Islands",
+    "Virginia",
+    "Washington",
+    "West Virginia",
+    "Wisconsin",
+    "Wyoming",
+]
+
 
 def main():
     # Read NYTimes Covid Database
@@ -43,9 +101,9 @@ def main():
 def calculate(reader):
 
     length = len(reader)
-    days = 14 + 1               # 14 days plus a day before to calculate new cases for first day
-    range_reader = days * 56    # data of 56 states during 56 days
-    
+    days = 14 + 1  # 14 days plus a day before to calculate new cases for first day
+    range_reader = days * 56  # data of 56 states during 56 days
+
     new_recorded_cases = []
 
     for state in states_data:
@@ -53,7 +111,7 @@ def calculate(reader):
         previous_case = None
         count = 0
 
-        for cases in reader[length - range_reader: length]:
+        for cases in reader[length - range_reader : length]:
 
             if state == cases["state"]:
                 if count == 0 and previous_case == None:
@@ -64,15 +122,17 @@ def calculate(reader):
                     new_cases = int(cases["cases"]) - previous_case
                     previous_case = int(cases["cases"])
 
-                    new_recorded_cases.append({"state": state, "cases": new_cases, "day": count})
+                    new_recorded_cases.append(
+                        {"state": state, "cases": new_cases, "day": count}
+                    )
                     count += 1
 
     return new_recorded_cases
-    
+
 
 # TODO: Calculate and print out seven day average for given state
 def comparative_averages(new_cases, states):
-    
+
     print(states)
     for state in states:
 
@@ -81,9 +141,20 @@ def comparative_averages(new_cases, states):
         try:
             length = len(states_avg)
 
-            previous_week_avg = round(sum(int(state["cases"]) for state in states_avg[0 : int(length / 2)]) / 7, 3)
-            last_week_avg = round(sum(int(state["cases"]) for state in states_avg[int(length / 2) : length]) / 7, 3)
-            
+            previous_week_avg = round(
+                sum(int(state["cases"]) for state in states_avg[0 : int(length / 2)])
+                / 7,
+                3,
+            )
+            last_week_avg = round(
+                sum(
+                    int(state["cases"])
+                    for state in states_avg[int(length / 2) : length]
+                )
+                / 7,
+                3,
+            )
+
             diff = previous_week_avg - last_week_avg
 
             if diff < 0:
