@@ -105,6 +105,24 @@ def calculate(reader):
     range_reader = days * 56  # data of 56 states during 56 days
 
     new_recorded_cases = []
+    test_recorded = []
+    test_prev = None
+
+    aux = 0
+    for _ in range(56):
+        for (i, case) in enumerate(reader[(length - range_reader + aux): length: 56]):
+
+            if i == 0:
+                test_prev = int(case["cases"])
+            else:
+                test_new_cases = int(case["cases"]) - test_prev
+                test_prev = int(case["cases"])
+
+                test_recorded.append(
+                        {"state": case["state"], "cases": test_new_cases, "date": case["date"]}
+                    )
+
+        aux += 1
 
     for state in states_data:
 
