@@ -7,18 +7,18 @@ def main():
 
 
 def fibonacci(sequence):
-    listst = list(range(sequence))
-    for i in listst:
+    result = []
+    for i in range(sequence):
     
         if i == 0:
             first_number = 0
             second_number = 1
         else:
-            yield second_number
+            result.append(second_number)
             temp = second_number
             second_number = first_number + second_number
             first_number = temp
-    
+    return result
 
 
 if __name__ == "__main__":
