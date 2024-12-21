@@ -1,28 +1,37 @@
-import math
-
 def main():
-    string = "ABCDEFGHIJKLIMNOQRSTUVWXYZ"
 
-    wrapping_index = 4
-    wrapper_string = []
-    wrapping_length = math.ceil(len(string) / wrapping_index)
+    size = 3
 
-    left = 0
-    right = wrapping_index
+    height = (size * 2) - 1
+    width = (height * 2) - 1
 
-    while True:
+    expand = 2
+    middle = width/2 - 1
+    middle_height = height/2 - 1
+    temp = 0
 
-        temp = string[left:right]
-        if not temp:
-            break
+    print(middle)
+    for i in range(height): 
 
-        wrapper_string.append(temp)
-        left += wrapping_index
-        right += wrapping_index
+        for j in range(width):
 
-    for i in wrapper_string:
+            if (j == round(middle) and i == 0) or (j == round(middle) and i == (height - 1)):
 
-        print(i)
+                print("a", end="")
+
+            elif (i == round(middle_height)) and (j == round(middle - expand) or j == round(middle + expand) or j == round(middle - expand - 2) or j == round(middle + expand + 2) or j == round(middle)):
+                
+                print("a", end="")
+            
+            elif (j == round(middle - expand) or j == round(middle + expand) or j == round(middle)) and i not in (0, height - 1):
+
+                print("a", end="")
+
+            else:
+                print("-", end="")
+
+
+        print()
 
 
 if __name__ == "__main__":
