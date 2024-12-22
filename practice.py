@@ -1,36 +1,33 @@
 def main():
-
-    size = 3
+    size = 5
 
     height = (size * 2) - 1
     width = (height * 2) - 1
 
-    expand = 2
-    middle = width/2 - 1
-    middle_height = height/2 - 1
-    temp = 0
+    middle_width = round(width / 2 - 1)
+    middle_height = round(height / 2 - 1)
 
-    print(middle)
-    for i in range(height): 
+    rangoli = [["-"] * width for _ in range(height)]
+    letters = ["e", "d", "c", "b", "a"]
 
-        for j in range(width):
+    for index in range(size):
+        expand = 0
+        for i in range(height): 
+            for j in range(width):
 
-            if (j == round(middle) and i == 0) or (j == round(middle) and i == (height - 1)):
+                if j == middle_width - expand or j == middle_width + expand:
+                    rangoli[index + i][j] = letters[index]
 
-                print("a", end="")
+            if i + index == height - 1 - index:
+                break
+            elif i + index < middle_height:
+                expand += 2
+            elif i + index >= middle_height:
+                expand -= 2
 
-            elif (i == round(middle_height)) and (j == round(middle - expand) or j == round(middle + expand) or j == round(middle - expand - 2) or j == round(middle + expand + 2) or j == round(middle)):
-                
-                print("a", end="")
-            
-            elif (j == round(middle - expand) or j == round(middle + expand) or j == round(middle)) and i not in (0, height - 1):
-
-                print("a", end="")
-
-            else:
-                print("-", end="")
-
-
+    for row in rangoli:
+        for i in row:
+            print(i, end="")
         print()
 
 
