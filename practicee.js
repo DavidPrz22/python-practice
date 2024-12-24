@@ -1,30 +1,34 @@
-const gifts1 = [3, 1, 2, 3, 4, 2, 5]
+const inventory = [
+  { name: 'book', quantity: 10, category: 'education' },
+  { name: 'book', quantity: 5, category: 'education' },
+  { name: 'paint', quantity: 3, category: 'art' }
+]
 
-const gifts2 = [6, 5, 5, 5, 5]
+function organizeInventory(inventory) {
+  // Code here
+  let object = {}
 
-const gifts3 = []
+  inventory.forEach(e => {
+    object[e["category"]] = {}
+  })
 
+  inventory.forEach(element => {
+      const { name, quantity, category } = element;
 
-// No hay regalos, la lista queda vacía
-// No hay regalos, la lista queda vacía
+      let temp = {}
+      temp[name] = quantity
 
-function prepareGifts(gifts) {
-    // Code here
-    let gift_arr = []
-  
-    gifts.forEach(e =>{
-      if (!gift_arr.includes(e)){
-        gift_arr.push(e)
+      if (object[category][name]) {
+
+        object[category][name] += temp[name]
+
+      } else {
+
+        Object.assign(object[category], temp)
       }
-    })
-    return gift_arr.sort()
-  }
+    });
 
-const preparedGifts1 = prepareGifts(gifts1)
-console.log(preparedGifts1) // [1, 2, 3, 4, 5]
+  return object
+}
 
-const preparedGifts2 = prepareGifts(gifts2)
-console.log(preparedGifts2) // [5, 6]
-
-const preparedGifts3 = prepareGifts(gifts3)
-console.log(preparedGifts3) // []
+console.log(organizeInventory(inventory))
