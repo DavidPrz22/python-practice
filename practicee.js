@@ -1,34 +1,34 @@
-const inventory = [
-  { name: 'book', quantity: 10, category: 'education' },
-  { name: 'book', quantity: 5, category: 'education' },
-  { name: 'paint', quantity: 3, category: 'art' }
-]
+function createXmasTree(height, ornament) {
+  /* Code here */
 
-function organizeInventory(inventory) {
-  // Code here
-  let object = {}
+  let base_height = 2
 
-  inventory.forEach(e => {
-    object[e["category"]] = {}
-  })
+  let width = (height * 2) - 1
+  let middle = Math.round(width / 2) - 1
 
-  inventory.forEach(element => {
-      const { name, quantity, category } = element;
+  let str = ""
+  let expand = 0 
+  
+  for (let i = 0; i < height; i++){
 
-      let temp = {}
-      temp[name] = quantity
+    for (let j = 0; j < width; j++){
 
-      if (object[category][name]) {
-
-        object[category][name] += temp[name]
-
+      if (j >= middle - expand && j <= middle + expand ) {
+        str = str.concat(ornament)
       } else {
-
-        Object.assign(object[category], temp)
+        str = str.concat("_")
       }
-    });
+    }
 
-  return object
+    expand++
+    str = str.concat("\n")
+  }
+
+  for (let i = 0; i < base_height; i++){
+    str = str.concat("_".repeat(middle) + "#"+ "_".repeat(middle) + "\n")
+  }
+  return str
 }
 
-console.log(organizeInventory(inventory))
+
+console.log(createXmasTree(6, "~"))
