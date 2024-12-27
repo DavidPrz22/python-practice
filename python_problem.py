@@ -1,50 +1,62 @@
 def main():
 
-    print(
-        inBox([
-            "###",
-            "#*#",
-            "###"
-        ])
-    ) # ➞ True
+    print(fixPackages('abc(def(gh)i)jk'))
+    # // ➞ "abcde"
+    # // Volteamos "cb" dentro de los paréntesis
 
-    print(inBox([
-        "####",
-        "#* #",
-        "#  #",
-        "####"
-    ])) # ➞ True
-    
-    print(inBox([
-        "#####",
-        "#   #",
-        "#  #*",
-        "#####"
-    ])) # ➞ False
+    # fixPackages('a(bc(def)g)h')
+    # # // ➞ "agdefcbh"
+    # # // 1º volteamos "def" → "fed", luego volteamos "bcfedg" → "gdefcb"
 
-    print(inBox([
-        "#####",
-        "#   #",
-        "#   #",
-        "#   #",
-        "#####"
-    ])) # ➞ False
+    # fixPackages('abc(def(gh)i)jk')
+    # # // ➞ "abcighfedjk"
+    # # // 1º volteamos "gh" → "hg", luego "defhgi" → "ighfed"
 
+    # fixPackages('a(b(c))e')
+    # # // ➞ "acbe"
+    # # // 1º volteamos "c" → "c", luego "bc" → "cb"
 
-def inBox(box):
-    
-    contained = False
-    for row in box:
-        if "*" in box[0] or "*" in box[-1]:
-            return False
+def fixPackages(string: str, index: int=0):
 
-        if (not row[0] == "*" and not row[-1] == "*") and "*" in row[1:-1]:
-            contained = True
+    open_parenthesis = None
+    found = False
+    restart = True
+    length = len(string)
 
-    if contained:
-        return True
+    while restart == True:
+        restart = False
+        for i in range(length - index):
+            if string[i + index] == "(":
+
+                open_parenthesis = i + index
+                string = fixPackages(string, i + index + 1)
+
+                if len(string) != length:
+                    length = len(string)
+                    restart = True
+                    break
+            elif isinstance(open_parenthesis, int) and string[i + index ] == ")":
+
+                close_parenthesis = i + index
+                found = True
+                break
+
+    if found:
+        string_range = string[open_parenthesis + 1: close_parenthesis]
+        reveresed_string = reverseString(string_range)
+
+        parenthesis_range = string[open_parenthesis: close_parenthesis + 1]
+        return string.replace(parenthesis_range, reveresed_string)
     else:
-        return False
+        return string
+
+def reverseString(string: str):
+    reversed_string = ""
+
+    for char in string[::-1]:
+        reversed_string += char
+    
+    return reversed_string
 
 
 if __name__ == "__main__":
