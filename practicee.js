@@ -1,34 +1,29 @@
-function createXmasTree(height, ornament) {
-  /* Code here */
-
-  let base_height = 2
-
-  let width = (height * 2) - 1
-  let middle = Math.round(width / 2) - 1
-
-  let str = ""
-  let expand = 0 
+function drawRace(indices, length) {
+  let race = []
   
-  for (let i = 0; i < height; i++){
+  for (let i = 0, indented = indices.length; indented > 0; indented--, i++) {
+    race.push(" ".repeat(indented)+ "~".repeat(length) + ` /${i + 1}`)
+  }
+  
+  let indent = indices.length
+  indices.forEach((el, i) => {
+    let temp = race[i].split("")
 
-    for (let j = 0; j < width; j++){
-
-      if (j >= middle - expand && j <= middle + expand ) {
-        str = str.concat(ornament)
-      } else {
-        str = str.concat("_")
-      }
+    if (el > 0) {
+      temp[el+indent] = "r"
+      race[i] = temp.join("")
+    } else if (el < 0) {
+      let index = race[i].length + el - 3
+      temp[index] = "r"
+      race[i] = temp.join("")
     }
+    
+    indent--
+  })
 
-    expand++
-    str = str.concat("\n")
-  }
-
-  for (let i = 0; i < base_height; i++){
-    str = str.concat("_".repeat(middle) + "#"+ "_".repeat(middle) + "\n")
-  }
-  return str
+  race.forEach(e=>{
+    console.log(e)
+  })
 }
 
-
-console.log(createXmasTree(6, "~"))
+drawRace([3, 7, -2], 12)
