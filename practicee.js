@@ -1,113 +1,131 @@
-const board = [
-  '·····',
-  '·····',
-  '·····',
-  '·oo@·',
-  '·····'
+let record = {C:5, D:0}
+
+
+const instructions = [
+  'MOV 5 A', //
+  'INC A 2', //
+  'INC Z 2', //
+  'JMP D 2', //
+  'DEC Z 2', //
+  'DEC A', //
 ]
 
-// console.log(moveTrain(board, 'U'))
-// // El tren se mueve hacia arriba
 
-// console.log(moveTrain(board, 'R'))
-// // ➞ 'crash'
-// // El tren se mueve hacia la derecha y la cabeza se choca con muro
+instructions.forEach((element, index) => {
 
+  let instruction = element.split(" ")
+  process_instruction(instruction)
 
+  if (instruction[0] == "JMP") {
 
-function moveTrain(board, mov) {
+    let x_value = instruction[1]
+    let y_value = instruction[2]
 
-  
-  board.forEach((e, i) => {
-    board[i] = e.split("")
-  })
-  
-  let chars = ["@", "o", "o"]
-  let row, col
-  let aux = 0
-  let head_found = false
+    if (record[x_value] != 0) return
 
-
-  for (let i = 0; i < board.length; i++) {
-    
-    for (let j = 0; j < board[0].length; j++) {
-      if (mov == "U") {
-        // HEAD -> TAIL -> MIDDLE
-        if (board[i][j] == "@" && head_found == false){
-
-          board[i-1][j] = "@"
-          board[i][j] = "·"
-          row = i
-          col = j
-          j=-1
-          head_found = true
-          aux++
-        } else if ((board[i][j] == "o") && aux != (chars.length - 1) && head_found == true) {
-
-          board[row][col] = board[i][j]
-          board[i][j] = "·"
-          row = i
-          col = j
-          j++
-          aux++
-        } else if (((board[i][j] == "o") && head_found == true && aux == (chars.length - 1) && board[i][j-1] == "o")){
-          break
-        }
-        else if ((board[i][j] == "o") && aux == (chars.length - 1) && head_found == true) {
-
-          board[row][col] = board[i][j]
-          board[i][j] = "·"
-        }
-      }
-
-      if (mov == "R") {
-        
-        if (board[i][j] == "@" && head_found == false){
-
-          if (j == board[0].length - 1){
-            console.log("crash")
-            return
-          }
-
-          board[i][j+1] = "@"
-          board[i][j] = "·"
-          row = i
-          col = j
-          head_found = true
-          j = -1
-          aux++
-        } else if ((board[i][j] == "o") && aux != (chars.length - 1) && head_found == true) {
-
-
-          board[row][col] = board[i][j]
-          board[i][j] = "·"
-          row = i
-          col = j
-          j++
-          aux++
-        } 
-        
-        else if ((board[i][j] == "o") && head_found == true && aux == (chars.length - 1) && board[i][j-1] == "o") {
-          break
-
-        } else if ((board[i][j] == "o") && head_found == true && aux == (chars.length - 1)) {
-          
-          board[row][col] = board[i][j]
-          board[i][j] = "·"
-        }
-        
-      }
-
+    for (let i = y_value - 1; i <= index; i++) {
+      let repeated_instruction = instructions[i].split(" ")
+      process_instruction(repeated_instruction)
     }
+
+    record[x_value] += 1
+  }
+})
+
+function process_instruction(instruction) {
+  if (instruction[0] == "MOV") {
+
+    let x_value = instruction[1]
+    let y_record = instruction[2]
+
+    if (instruction.length != 3) {
+      console.log("incomplete instruction MOV x y")
+      return
+    }
+
+    if (record[x_value]) {
+      record[y_record] = record[x_value]
+    } else {
+
+      if (!isNaN(new Number(x_value))) {
+        record[y_record] = Number(x_value)
+      } else {
+        record[y_record] = x_value
+      }
+    }
+
   }
 
-  board.forEach((e, i) => {
-    board[i] = e.join("")
-  })
+  if (instruction[0] == "INC") {
+
+    if (instruction.length < 2 || instruction.length > 3) {
+      console.log("incomplete DEC x (or:y)")
+      return
+    }
+    if (instruction.length == 2) {
+      let x_value = instruction[1]
+
+      if (record[x_value]) {
+        record[x_value] += 1
+      } else {
+        record[x_value] = 0
+      }
+    } else if (instruction.length == 3) {
+
+      let x_value = instruction[1]
+      let y_value = instruction[2]
+
+      if (record[x_value]) {
+
+        if (!isNaN(new Number(y_value))) {
+          record[x_value] += Number(y_value)
+        } else {
+          console.log(`Can not increase with non-digit characters on instruction ${index}`)
+          return
+        }
+      } else {
+        record[x_value] = Number(y_value)
+      }
+    }
+
+  }
+
+  if (instruction[0] == "DEC") {
+
+    
+    if (instruction.length < 2 || instruction.length > 3) {
+      console.log("Instruction DEC X (or:Y)")
+      return
+    }
+
+    if (instruction.length == 2) {
+
+      let x_value = instruction[1]
+      
+      if (record[x_value]) {
+        record[x_value]--
+      } else {
+        record[x_value] = 0
+      }
+    } else if (instruction.length == 3) {
+
+      let x_value = instruction[1]
+      let y_value = instruction[2]
+
+      if (record[x_value]) {
+
+        if (!isNaN(new Number(y_value))) {
+          record[x_value] -= Number(y_value)
+        } else {
+          console.log(`Can not decrease with non-digit characters on instruction ${index}`)
+          return
+        }
+      } else {
+        record[x_value] = Number(y_value)
+      }
+    }
+
+  }
 }
 
-moveTrain(board, "R")
-
-board.forEach(e=>{
-  console.log(e)
-})
+console.log(record)
