@@ -1,103 +1,185 @@
 """
-Los elfos del Polo Norte han creado un robot 🤖 especial que ayuda a Papá Noel a distribuir regalos dentro de un gran almacén. El robot se mueve en un plano 2D y partimos desde el origen (0, 0).
+El Grinch ha estado haciendo de las suyas en el Polo Norte y ha sembrado bombas de carbón explosivo 💣 en la fábrica de juguetes de los duendes. Quiere que todos los juguetes queden inutilizados y por eso ha dejado una cuadrícula donde algunas celdas tienen carbón explosivo (true) y otras están vacías (false).
 
-Queremos saber si, tras ejecutar una serie de movimientos, el robot vuelve a estar justo donde empezó.
+Los duendes necesitan tu ayuda para mapear las zonas peligrosas. Cada celda vacía debe mostrar un número que indique cuántas bombas de carbón explosivo hay en las posiciones adyacentes, incluidas las diagonales.
 
-Las órdenes básicas del robot son:
+detectBombs([
+    [true, false, false],
+    [false, true, false],
+    [false, false, false]
+])
+// [
+//   [1, 2, 1],
+//   [2, 1, 1],
+//   [1, 1, 1]
+// ]
 
-    L: Mover hacia la izquierda
-    R: Mover hacia la derecha
-    U: Mover hacia arriba
-    D: Mover hacia abajo
+detectBombs([
+    [true, false],
+    [false, false]
+])
+// [
+//   [0, 1],
+//   [1, 1]
+// ]
 
-Pero también tiene ciertos modificadores para los movimientos:
+detectBombs([
+    [true, true],
+    [false, false],
+    [true, true]
+])
 
-    *: El movimiento se realiza con el doble de intensidad (ej: *R significa RR)
-    !: El siguiente movimiento se invierte (ej: R!L se considera como RR)
-    ?: El siguiente movimiento se hace sólo si no se ha hecho antes (ej: R?R significa R)
+// [
+//   [1, 1],
+//   [4, 4],
+//   [1, 1]
+// ]
 
-Nota: Cuando el movimiento se invierte con ! se contabiliza el movimiento invertido y no el original. Por ejemplo, !U?U invierte el movimiento de U, por lo que contabiliza que se hizo el movimiento D pero no el U. Así !U?U se traduce como D?U y, por lo tanto, se haría el movimiento U final.
-
-Debes devolver:
-
-    true: si el robot vuelve a estar justo donde empezó
-    [x, y]: si el robot no vuelve a estar justo donde empezó, devolver la posición donde se detuvo
+Nota: ¿Quieres una pista? Seguro que has jugado al juego de buscaminas antes… 😉
 
 """
 
 
-
 def main():
-    print(isRobotBack('R'))      # [1, 0]
-    print(isRobotBack('RL'))     # true
-    print(isRobotBack('RLUD'))   # true
-    print(isRobotBack('*RU'))    # [2, 1]
-    print(isRobotBack('R*U'))    # [1, 2]
-    print(isRobotBack('LLL!R'))  # [-4, 0]
-    print(isRobotBack('R?R'))    # [1, 0]
-    print(isRobotBack('U?D'))    # true
-    print(isRobotBack('R!L'))    # [2, 0]
-    print(isRobotBack('U!D'))    # [0, 2]
-    print(isRobotBack('R?L'))    # true
-    print(isRobotBack('U?U'))    # [0, 1]
-    print(isRobotBack('*U?U'))   # [0, 2]
-    print(isRobotBack('U?D?U'))  # true
 
-
-
-def isRobotBack(instructions: str):
-
-    origin = [0, 0]
-    plane = [0, 0]
-    movement = list(convert_instructions(instructions))
-
-    for mov in movement:
-        
-        match mov:
-            case "R":
-                plane[0] += 1
-            case "L":
-                plane[0] -= 1
-            case "U":
-                plane[1] += 1
-            case "D":
-                plane[1] -= 1
-
-    if plane == origin:
-        return True
-    else:
-        return plane
-
-
-def convert_instructions(instructions: list):
-    converted = ""
-
-    for index in range(len(instructions)):
-
-        if instructions[index] == "*":
-            converted += instructions[index + 1]
-
-        elif instructions[index] == "!":
-            match instructions[index + 1]:
-                case "R":
-                    converted += "L"
-                case "L":
-                    converted += "R"
-                case "D":
-                    converted += "U"
-                case "U":
-                    converted += "D"
-
-        elif instructions[index - 1] == "!" or instructions[index - 1] == "?":
-            pass
-        
-        elif instructions[index] == "?":
-            if not instructions[index + 1] in converted[:]:
-                converted += instructions[index + 1]
-        else:
-            converted += instructions[index]
+    bombs = [
+                [True, False, False],
+                [False, True, False],
+                [False, False, False]
+            ]
     
-    return converted
+    for i in detectBombs(bombs):
+        print(i)
+
+
+def detectBombs(bombs: list):
+    width = len(bombs[0])
+    height = len(bombs)
+    
+    numbers = [[0 for _ in range(width)] for _ in range(height)]
+
+    for i in range(height):
+
+        for j in range(width):
+            
+            if bombs[i][j] == True:
+
+                # TOP LEFT CORNER - DONE
+                if i == 0 and j == 0:
+
+                    for yx in range(2):
+                        for (ix, val) in enumerate(bombs[i + yx][j: j + 2]):
+                            
+                            if not (yx == 0 and ix == 0):
+                                
+                                if val == False or val == True:
+                                    numbers[i + yx][j + ix] += 1
+
+                
+                # TOP RIGHT CORNER - DONE
+                if i == 0 and j == (width - 1):
+
+                    for yx in range(2):
+                        for (ix, val) in enumerate(bombs[i + yx][j - 1: j + 1]):
+
+                            if not (yx == 0 and ix == 1):
+
+                                if val == False or val == True:
+                                    
+                                    if ix == 0:
+                                        numbers[i + yx][j - 1] += 1
+                                    else:
+                                        numbers[i + yx][j] += 1
+
+                # BOTTOM LEFT CORNER - DONE
+                if i == (height - 1) and j == 0:
+
+                    for yx in range(-1, 1):
+                        for (ix, val) in enumerate(bombs[i + yx][j: j + 2]):
+
+                            if not (yx == 0 and ix == 0):
+
+                                if val == False or val == True:
+                                    
+                                        numbers[i + yx][j + ix] += 1
+
+                # BOTTOM RIGHT CORNER - DONE
+                if i == (height - 1) and j == (width - 1):
+
+                    for yx in range(-1, 1):
+                        for (ix, val) in enumerate(bombs[i + yx][j - 1: j + 2]):
+
+                            if not (yx == 0 and ix == 1):
+
+                                if val == False or val == True:
+                                    if ix == 0:
+                                        numbers[i + yx][j - 1] += 1
+                                    else:
+                                        numbers[i + yx][j] += 1
+
+                # TOP CENTER
+                if i == 0 and (j > 0 and j < width - 1):
+
+                    for yx in range(2):
+                        for (ix, val) in enumerate(bombs[i + yx][j - 1: j + 2]):
+
+                            if not (yx == 0 and ix == 1):
+                                
+                                if val == False or val == True:
+
+                                    numbers[i + yx][j + ix - 1] += 1
+
+                # BOTTOM CENTER
+                if i == (height - 1) and (j > 0 and j < width - 1):
+
+                    for yx in range(-1, 1):
+                        for (ix, val) in enumerate(bombs[i + yx][j - 1: j + 2]):
+
+                            if not (yx == 0 and ix == 1):
+                                if val == False or val == True:
+
+                                    numbers[i + yx][j + ix - 1] += 1
+
+                # LEFT CENTER
+                if j == 0 and (i > 0 and i < height - 1):
+
+                    for yx in range(-1, 2):
+                        for (ix, val) in enumerate(bombs[i + yx][j: j + 2]):
+
+                            if not (yx == 0 and ix == 0):
+
+                                if val == False or val == True:
+                                        numbers[i + yx][j + ix] += 1
+
+                # RIGHT CENTER
+                if j == (width - 1) and (i > 0 and i < height - 1):
+
+                    for yx in range(-1, 2):
+                        temp = -1
+                        for (ix, val) in enumerate(bombs[i + yx][j - 1: j + 2]):
+                            if not (yx == 0 and ix == 1):
+
+                                if val == False or val == True:
+                                    if yx == -1 or yx == 1:
+                                        numbers[i + yx][j + temp] += 1
+                                        temp += 1
+                                    else:
+                                        numbers[i][j - 1] += 1
+                
+                # MIDDLE IF PRESENT
+
+                if (i > 0 and i < height - 1) and (j > 0 and j < width - 1):
+
+                    for yx in range(-1, 2):
+                        for (ix, val) in enumerate(bombs[i + yx][j - 1 : j + 2]):
+
+                            if not (yx == 0 and ix == 1):
+
+                                if val == False or val == True:
+                                    numbers[i + yx][j + ix - 1] += 1
+
+    return numbers
+
 
 if __name__ == "__main__":
     main()
