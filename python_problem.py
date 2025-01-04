@@ -1,184 +1,140 @@
 """
-El Grinch ha estado haciendo de las suyas en el Polo Norte y ha sembrado bombas de carbón explosivo 💣 en la fábrica de juguetes de los duendes. Quiere que todos los juguetes queden inutilizados y por eso ha dejado una cuadrícula donde algunas celdas tienen carbón explosivo (true) y otras están vacías (false).
+¡Se acerca el día para repartir regalos! Necesitamos apilar los regalos que transportaremos en el trineo 🛷 y para eso los vamos a meter en cajas 📦.
 
-Los duendes necesitan tu ayuda para mapear las zonas peligrosas. Cada celda vacía debe mostrar un número que indique cuántas bombas de carbón explosivo hay en las posiciones adyacentes, incluidas las diagonales.
+Los regalos se pueden meter en 4 cajas distintas, donde cada caja soporta 1, 2, 5, 10 de peso y se representan así:
 
-detectBombs([
-    [true, false, false],
-    [false, true, false],
-    [false, false, false]
-])
-// [
-//   [1, 2, 1],
-//   [2, 1, 1],
-//   [1, 1, 1]
-// ]
+    _
+1: |_|
+    _____
+2: |_____|
+    _____
+5: |     |
+   |_____|
+     _________
+10: |         |
+    |_________|
 
-detectBombs([
-    [true, false],
-    [false, false]
-])
-// [
-//   [0, 1],
-//   [1, 1]
-// ]
+// Representación en JavaScript:
+const boxRepresentations = {
+    1: [" _ ", "|_|"] ,
+    2: [" ___ ", "|___|"],
+    5: [" _____ ", "|     |", "|_____|"],
+    10: [" _________ ", "|         |", "|_________|"]
+}
 
-detectBombs([
-    [true, true],
-    [false, false],
-    [true, true]
-])
+Tu misión es que al recibir el peso de los regalos, uses las mínimas cajas posibles y que, además, las apiles de menos peso (arriba) a más peso (abajo). Siempre alineadas a la izquierda.
 
-// [
-//   [1, 1],
-//   [4, 4],
-//   [1, 1]
-// ]
+Además, ten en cuenta que al apilarlas, se reusa el borde inferior de la caja.
 
-Nota: ¿Quieres una pista? Seguro que has jugado al juego de buscaminas antes… 😉
+distributeWeight(1)
+// Devuelve:
+//  _
+// |_|
+
+distributeWeight(2)
+// Devuelve:
+//  ___
+// |___|
+
+distributeWeight(3)
+// Devuelve:
+//  _
+// |_|_
+// |___|
+
+distributeWeight(4)
+// Devuelve:
+//  ___
+// |___|
+// |___|
+
+distributeWeight(5)
+// Devuelve:
+//  _____
+// |     |
+// |_____|
+
+distributeWeight(6)
+// Devuelve:
+//  _
+// |_|___
+// |     |
+// |_____|
+
+Nota: ¡Ten cuidado con los espacios en blanco! No añadas espacios en blanco a la derecha de una caja si no son necesarios.
 
 """
+
+boxRepresentations = {
+    "1": [" _ ", "|_|"],
+    "2": [" ___ ", "|___|"],
+    "5": [" _____ ", "|     |", "|_____|"],
+    "10": [" _________ ", "|         |", "|_________|"],
+}
 
 
 def main():
 
-    bombs = [
-                [True, False, False],
-                [False, True, False],
-                [False, False, False]
-            ]
-    
-    for i in detectBombs(bombs):
+    for i in distribute_weight(18):
         print(i)
 
 
-def detectBombs(bombs: list):
-    width = len(bombs[0])
-    height = len(bombs)
-    
-    numbers = [[0 for _ in range(width)] for _ in range(height)]
+def distribute_weight(weight):
 
-    for i in range(height):
+    # DETERMINE DISTRIBUTION OF BOXES TO PRINT FROM LIGHTEST TO HEAVIEST
+    boxes_capacity = [10, 5, 2, 1]
+    boxes_distributed = []
+    remaining_weight = weight
 
-        for j in range(width):
-            
-            if bombs[i][j] == True:
+    boxes_capacity_index = 0
+    while True:
 
-                # TOP LEFT CORNER - DONE
-                if i == 0 and j == 0:
+        box_factor = remaining_weight - boxes_capacity[boxes_capacity_index]
 
-                    for yx in range(2):
-                        for (ix, val) in enumerate(bombs[i + yx][j: j + 2]):
-                            
-                            if not (yx == 0 and ix == 0):
-                                
-                                if val == False or val == True:
-                                    numbers[i + yx][j + ix] += 1
+        if box_factor > 0:
 
-                
-                # TOP RIGHT CORNER - DONE
-                if i == 0 and j == (width - 1):
+            boxes_distributed.append(str(boxes_capacity[boxes_capacity_index]))
+            remaining_weight -= boxes_capacity[boxes_capacity_index]
+        elif box_factor < 0:
 
-                    for yx in range(2):
-                        for (ix, val) in enumerate(bombs[i + yx][j - 1: j + 1]):
+            boxes_capacity_index += 1
 
-                            if not (yx == 0 and ix == 1):
+        elif box_factor == 0:
+            boxes_distributed.append(str(boxes_capacity[boxes_capacity_index]))
+            break
 
-                                if val == False or val == True:
-                                    
-                                    if ix == 0:
-                                        numbers[i + yx][j - 1] += 1
-                                    else:
-                                        numbers[i + yx][j] += 1
+    boxes_distributed.reverse()
 
-                # BOTTOM LEFT CORNER - DONE
-                if i == (height - 1) and j == 0:
+    # PRINT EVERY BOX TO LEFT-ORIENTED
+    final_boxes = []
 
-                    for yx in range(-1, 1):
-                        for (ix, val) in enumerate(bombs[i + yx][j: j + 2]):
+    for i, index in enumerate(boxes_distributed):
 
-                            if not (yx == 0 and ix == 0):
+        if len(boxes_distributed) > 1:
+            for j, box_part in enumerate(boxRepresentations[index]):
 
-                                if val == False or val == True:
-                                    
-                                        numbers[i + yx][j + ix] += 1
+                if j == 0 and i == 0:
 
-                # BOTTOM RIGHT CORNER - DONE
-                if i == (height - 1) and j == (width - 1):
+                    final_boxes.append(box_part)
+                elif j == 0:
 
-                    for yx in range(-1, 1):
-                        for (ix, val) in enumerate(bombs[i + yx][j - 1: j + 2]):
+                    new_box_part_top = (
+                        prev_box_bottom + box_part[len(prev_box_bottom) :]
+                    )
+                    final_boxes.append(new_box_part_top)
 
-                            if not (yx == 0 and ix == 1):
+                elif j == len(boxRepresentations[index]) - 1:
 
-                                if val == False or val == True:
-                                    if ix == 0:
-                                        numbers[i + yx][j - 1] += 1
-                                    else:
-                                        numbers[i + yx][j] += 1
+                    if i == len(boxes_distributed) - 1:
+                        final_boxes.append(box_part)
+                    else:
+                        prev_box_bottom = box_part
+                else:
+                    final_boxes.append(box_part)
+        else:
+            final_boxes = boxRepresentations[index]
 
-                # TOP CENTER
-                if i == 0 and (j > 0 and j < width - 1):
-
-                    for yx in range(2):
-                        for (ix, val) in enumerate(bombs[i + yx][j - 1: j + 2]):
-
-                            if not (yx == 0 and ix == 1):
-                                
-                                if val == False or val == True:
-
-                                    numbers[i + yx][j + ix - 1] += 1
-
-                # BOTTOM CENTER
-                if i == (height - 1) and (j > 0 and j < width - 1):
-
-                    for yx in range(-1, 1):
-                        for (ix, val) in enumerate(bombs[i + yx][j - 1: j + 2]):
-
-                            if not (yx == 0 and ix == 1):
-                                if val == False or val == True:
-
-                                    numbers[i + yx][j + ix - 1] += 1
-
-                # LEFT CENTER
-                if j == 0 and (i > 0 and i < height - 1):
-
-                    for yx in range(-1, 2):
-                        for (ix, val) in enumerate(bombs[i + yx][j: j + 2]):
-
-                            if not (yx == 0 and ix == 0):
-
-                                if val == False or val == True:
-                                        numbers[i + yx][j + ix] += 1
-
-                # RIGHT CENTER
-                if j == (width - 1) and (i > 0 and i < height - 1):
-
-                    for yx in range(-1, 2):
-                        temp = -1
-                        for (ix, val) in enumerate(bombs[i + yx][j - 1: j + 2]):
-                            if not (yx == 0 and ix == 1):
-
-                                if val == False or val == True:
-                                    if yx == -1 or yx == 1:
-                                        numbers[i + yx][j + temp] += 1
-                                        temp += 1
-                                    else:
-                                        numbers[i][j - 1] += 1
-                
-                # MIDDLE IF PRESENT
-
-                if (i > 0 and i < height - 1) and (j > 0 and j < width - 1):
-
-                    for yx in range(-1, 2):
-                        for (ix, val) in enumerate(bombs[i + yx][j - 1 : j + 2]):
-
-                            if not (yx == 0 and ix == 1):
-
-                                if val == False or val == True:
-                                    numbers[i + yx][j + ix - 1] += 1
-
-    return numbers
+    return final_boxes
 
 
 if __name__ == "__main__":
