@@ -1,82 +1,132 @@
-// Santa Claus tiene una agenda mágica 📇 donde guarda las direcciones de los niños para entregar los regalos. El problema: la información de la agenda está mezclada y malformateada. Las líneas contienen un número de teléfono mágico, el nombre de un niño y su dirección, pero todo está rodeado de caracteres extraños.
+// En el Polo Norte, los elfos tienen dos árboles binarios mágicos que generan energía 🌲🌲 para mantener encendida la estrella navideña ⭐️. Sin embargo, para que funcionen correctamente, los árboles deben estar en perfecta sincronía como espejos 🪞.
 
-// Santa necesita tu ayuda para encontrar información específica de la agenda. Escribe una función que, dado el contenido de la agenda y un número de teléfono, devuelva el nombre del niño y su dirección.
+// Dos árboles binarios son espejos si:
 
-// Ten en cuenta que en la agenda:
+//     Las raíces de ambos árboles tienen el mismo valor.
+//     Cada nodo del primer árbol debe tener su correspondiente nodo en la posición opuesta en el segundo árbol.
 
-//     Los números de teléfono están formateados como +X-YYY-YYY-YYY (donde X es uno o dos dígitos, e Y es un dígito).
-//     El nombre de cada niño está siempre entre < y >
+// Y el árbol se representa con tres propiedades value, left y right. Dentro de estas dos últimas va mostrando el resto de ramas (si es que tiene):
 
-// La idea es que escribas una funcióna que, pasándole el teléfono completo o una parte, devuelva el nombre y dirección del niño. Si no encuentra nada o hay más de un resultado, debes devolver null.
+// const tree = {
+//   value: '⭐️',
+//   left: {
+//     value: '🎅'
+//     // left: {...}
+//     // right: { ... }
+//   },
+//   right: {
+//     value: '🎁'
+//     // left: { ... }
+//     // right: { ...&nbsp;}
+//   }
+// }
 
-// const agenda = `+34-600-123-456 Calle Gran Via 12 <Juan Perez>
-// Plaza Mayor 45 Madrid 28013 <Maria Gomez> +34-600-987-654
-// <Carlos Ruiz> +1-800-555-0199 Fifth Ave New York`
+// Santa necesita tu ayuda para verificar si los árboles están sincronizados para que la estrella pueda seguir brillando. Debes devolver un array donde la primera posición indica si los árboles están sincronizados y la segunda posición devuelve el valor de la raíz del primer árbol.
 
-// findInAgenda(agenda, '34-600-123-456')
-// // { name: "Juan Perez", address: "Calle Gran Via 12" }
+// const tree1 = {
+//   value: '🎄',
+//   left: { value: '⭐' },
+//   right: { value: '🎅' }
+// }
 
-// findInAgenda(agenda, '600-987')
-// // { name: "Maria Gomez", address: "Plaza Mayor 45 Madrid 28013" }
+// const tree2 = {
+//   value: '🎄',
+//   left: { value: '🎅' }
+//   right: { value: '⭐' },
+// }
 
-// findInAgenda(agenda, '111')
-// // null
-// // Explicación: No hay resultados
+// isTreesSynchronized(tree1, tree2) // [true, '🎄']
 
-// findInAgenda(agenda, '1')
-// // null
-// // Explicación: Demasiados resultados
+// /*
+//   tree1             tree2
+//    🎄                🎄
+//    / \               / \
+//  ⭐   🎅          🎅   ⭐
+// */
+
+// const tree3 = {
+//   value: '🎄',
+//   left: { value: '🎅' },
+//   right: { value: '🎁' }
+// }
+
+// isTreesSynchronized(tree1, tree3) // [false, '🎄']
+
+// const tree4 = {
+//   value: '🎄',
+//   left: { value: '⭐' },
+//   right: { value: '🎅' }
+// }
+
+// isTreesSynchronized(tree1, tree4) // [false, '🎄']
+
+// isTreesSynchronized(
+//   { value: '🎅' },
+//   { value: '🧑‍🎄' }
+// ) // [false, '🎅']
 
 
-const agenda = `+34-600-123-456 Calle Gran Via 12 <Juan Perez>
-Plaza Mayor 45 Madrid 28013 <Maria Gomez> +34-600-987-654
-<Carlos Ruiz> +1-800-555-0199 Fifth Ave New York`
+const first_tree = {
+  value: '🎄',
 
+  left: {
+    value: '⭐'
+  },
 
-function findInAgenda(agenda, number) {
-
-  let formatted_agenda = []
-
-  // MAGIC PHONE NUMBERS
-  const phones_matches = [...agenda.matchAll(/\+(\d{1,2}-\d{3}-\d{3}-\d{3,4})/g)];
-  const phones = phones_matches.map(match => match[1]);
-
-  // KIDS NAMES
-  const names_matches = [...agenda.matchAll(/<([a-zA-Z0-9 ]+)>/g)]
-  const names = names_matches.map(match => match[1])
-  //DIRECTIONS
-  let temp = agenda.replace(/\+\d{1,2}-\d{3}-\d{3}-\d{3,4}/g,"\n")
-                      .replace(/<[a-zA-Z0-9 ]+>/g,"\n")
-                        .split('\n')
-
-  let directions = []
-
-  for (i of temp) {
-    let dir = i.trim()
-    if (dir) {
-      directions.push(dir)
-    }
+  right: {
+    value: '🎅'
   }
-
-  phones.forEach((_, i)=> {
-    formatted_agenda.push({[phones[i]]: {name: names[i], direction: directions[i]}})
-  });
-  
-  for ( i of formatted_agenda) {
-    let key = Object.keys(i)[0]
-    
-    if (key.includes(number)) {
-      
-      return i[key]
-    }
-  }
-
-  return null
 }
 
-console.log(findInAgenda(agenda, '34-600-123-456'))
-// { name: "Juan Perez", address: "Calle Gran Via 12" }
+const second_tree = {
+  value: '🎄',
 
-console.log(findInAgenda(agenda, '600-987'))
-// { name: "Maria Gomez", address: "Plaza Mayor 45 Madrid 28013" }
+  left: {
+    value: '🎅'
+  },
 
+  right: {
+    value: '⭐'
+  }
+}
+
+
+function isTreesSynchronized(tree1, tree2) {
+
+  if (!tree1) {
+    return
+  }
+
+  let first = isTreesSynchronized(tree1.left, tree2.right) 
+  let second = isTreesSynchronized(tree1.right, tree2.left)
+
+  if (first && second) {
+
+    if (tree1.value == tree2.value)
+      return [true, tree1.value]
+
+    return [false, tree1.value]
+
+  } else {
+
+    if (tree1.left && tree2.left) {
+
+      return [false, tree1.value]
+
+    } else {
+
+      if (tree1.value == tree2.value) {
+        return true
+      }
+
+      return false
+
+    }
+  }
+  
+}
+
+console.log(isTreesSynchronized(
+  { value: '🎅' },
+  { value: '🧑‍🎄' }
+))
