@@ -1,70 +1,14 @@
-def execute(code: str) -> int:
-    value = 0
-    i = 0
-    code_len = len(code)
-    
-    # Cache for matching brackets
-    bracket_pairs = {}
-    stack = []
-    
-    # Pre-process bracket pairs
-    for pos, char in enumerate(code):
-        if char == '[':
-            stack.append(pos)
-        elif char == ']' and stack:
-            start = stack.pop()
-            bracket_pairs[start] = pos
-            bracket_pairs[pos] = start
+def findmissingNumbers(numbers:list) -> list:
 
-    while i < code_len:
-        char = code[i]
-        
-        match char:
-            case '+':
-                value += 1
-            case '-':
-                value -= 1
-            case '[':
-                if value == 0:
-                    i = bracket_pairs[i]
-            case ']':
-                if value != 0:
-                    i = bracket_pairs[i]
-            case '{':
-                if value == 0:
-                    # Skip to matching '}'
-                    depth = 1
-                    while depth > 0 and i < code_len - 1:
-                        i += 1
-                        if code[i] == '{':
-                            depth += 1
-                        elif code[i] == '}':
-                            depth -= 1
-            case '>':
-                pass
-            case '}':
-                pass
-            case _:
-                raise ValueError(f"Invalid instruction: {char}")
-        
-        i += 1
-    
-    return value
+    max_number = max(numbers)
+    missing_Numbers = [j for j in range(1, max_number) if not j in numbers]
+
+    return missing_Numbers
+
 
 def main():
-    test_cases = [
-        '+++',              # 3
-        '+--',             # -1
-        '>>>+{+-}{-}',     # 0
-        '>+++[-]',         # 0
-        '{+}{+}{+}',       # 0
-        '------[+]++',     # 2
-        '+{[-]+}+',        # 2
-        '----[+{+}]+{++++}' # 5
-    ]
-    
-    for test in test_cases:
-        print(f"{test}: {execute(test)}")
+    print(findmissingNumbers([5, 5, 5, 3, 3, 2, 1]))
+
 
 if __name__ == "__main__":
     main()
