@@ -1,41 +1,73 @@
-def findmissingNumbers(numbers:list) -> list:
-
-    max_number = max(numbers)
-    missing_Numbers = [j for j in range(1, max_number) if not j in numbers]
-
-    return missing_Numbers
-
-
 def main():
-    print(findmissingNumbers([5, 5, 5, 3, 3, 2, 1]))
+
+    generate_gift_sets(["car", "doll", "ball", "puzzle", "toy"])
+
+
+def generate_gift_sets(toys):
+
+    result = []
+
+    def generate_combinations(start, current_combo, target_length):
+
+        if len(current_combo) == target_length:
+            result.append(current_combo[:])
+            return
+
+        for i in range(start, len(toys)):
+            current_combo.append(toys[i])
+            generate_combinations(i + 1, current_combo, target_length)
+            current_combo.pop()
+
+    for length in range(1, len(toys) + 1):
+        generate_combinations(0, [], length)
+
+    return result
 
 
 if __name__ == "__main__":
     main()
 
-#     for i in generate_gift_sets(["car", "doll", "ball", "puzzle", "toy", "paddle"]):
-#         print(i)
 
-
-# def generate_gift_sets(toys):
-
+# def find_combinations(combinations_list: list):
+#     length = len(combinations_list)
 #     result = []
-    
-#     def generate_combinations(start, current_combo, target_length):
 
-#         if len(current_combo) == target_length:
-#             result.append(current_combo[:])
-#             return
-            
-#         for i in range(start, len(toys)):
-#             current_combo.append(toys[i])
-#             generate_combinations(i + 1, current_combo, target_length)
-#             current_combo.pop()
+#     for index in range(length):
+
+#         for idx in range(0, length - index):
+
+#             nexted = idx + 1
+#             for ind in range(nexted, length - index):
+
+#                 selected_item = [combinations_list[idx]]
+
+#                 for indx in range (ind, ind + index):
+
+#                     selected_item.append(combinations_list[indx])
+
+#                 if selected_item not in result:
+#                     result.append(selected_item)
+
+#     results = []
+
+#     for element_comb in result:
+
+#         element = element_comb[len(element_comb) - 1]
+#         cycle_lenth = length - (combinations_list.index(element) + 1)
+
+#         index_append_start = combinations_list.index(element) + 1
+
+#         for i in range(cycle_lenth):
+#             comb_copy = element_comb.copy()
+#             for j in range(index_append_start + i, length):
+#                 comb_copy.append(combinations_list[j])
+#                 results.append(comb_copy)
+#                 break
     
-#     for length in range(1, len(toys) + 1):
-#         generate_combinations(0, [], length)
-        
-#     return result
+#     results = [[i] for i in combinations_list] + results
+#     for d in results:
+#         print(d)
+
 
 
     # VERSION 0.0.9 BETA ALPHA PRO LIMITED EDITION 4K ULTRA 240FPS LSS
@@ -74,25 +106,3 @@ if __name__ == "__main__":
     #             i = 0
     #         else:
     #             i += 1
-
-
-
-
-    # VERSION 0.0.1
-    # for i in range(length + 1):
-
-    #     if i < length:
-    #         for j in range(i, length):
-
-    #             temp_set = []
-
-    #             if i > 0:
-    #                 temp_set.append(sets[i - 1])
-    #                 temp_set.append(sets[j])
-    #             else:
-    #                 temp_set.append(sets[j])
-            
-    #             gift_sets.append(temp_set)
-    #     else:
-    #         gift_sets.append(sets)
-    

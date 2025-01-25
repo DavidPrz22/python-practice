@@ -66,67 +66,126 @@
 // ) // [false, '🎅']
 
 
-const first_tree = {
-  value: '🎄',
+// const first_tree = {
+//   value: '🎄',
 
+//   left: {
+//     value: '⭐'
+//   },
+
+//   right: {
+//     value: '🎅'
+//   }
+// }
+
+// const second_tree = {
+//   value: '🎄',
+
+//   left: {
+//     value: '🎅'
+//   },
+
+//   right: {
+//     value: '⭐'
+//   }
+// }
+
+
+// function isTreesSynchronized(tree1, tree2) {
+
+//   if (!tree1) {
+//     return
+//   }
+
+//   let first = isTreesSynchronized(tree1.left, tree2.right) 
+//   let second = isTreesSynchronized(tree1.right, tree2.left)
+
+//   if (first && second) {
+
+//     if (tree1.value == tree2.value)
+//       return [true, tree1.value]
+
+//     return [false, tree1.value]
+
+//   } else {
+
+//     if (tree1.left && tree2.left) {
+
+//       return [false, tree1.value]
+
+//     } else {
+
+//       if (tree1.value == tree2.value) {
+//         return true
+//       }
+
+//       return false
+
+//     }
+//   }
+  
+// }
+
+// console.log(isTreesSynchronized(
+//   { value: '🎅' },
+//   { value: '🧑‍🎄' }
+// ))
+
+
+const binaryTree = {
+  value: 10,
   left: {
-    value: '⭐'
+
+      value: 5,
+        left: {
+          value: 3,
+          left: null,
+          right: null,
+        },
+        right: {
+          value: 7,
+          left: null,
+          right: null,
+        },
   },
-
   right: {
-    value: '🎅'
-  }
-}
 
-const second_tree = {
-  value: '🎄',
+      value: 15,
+        left: {
+          value: 12,
+          left: null,
+          right: null,
+        },
 
-  left: {
-    value: '🎅'
+        right: {
+            value: 18,
+            left: null,
+            right: null,
+        },
   },
+};
 
-  right: {
-    value: '⭐'
-  }
-}
+function allocate_branches(binaryTree, level, levels) {
 
-
-function isTreesSynchronized(tree1, tree2) {
-
-  if (!tree1) {
+  if (!binaryTree)
     return
+  
+  allocate_branches(binaryTree.left, level + 1, levels)
+  allocate_branches(binaryTree.right, level + 1, levels)
+
+  while (level >= levels.length) {
+    levels.push([])
   }
 
-  let first = isTreesSynchronized(tree1.left, tree2.right) 
-  let second = isTreesSynchronized(tree1.right, tree2.left)
+  levels[level].push(binaryTree.value)
 
-  if (first && second) {
-
-    if (tree1.value == tree2.value)
-      return [true, tree1.value]
-
-    return [false, tree1.value]
-
-  } else {
-
-    if (tree1.left && tree2.left) {
-
-      return [false, tree1.value]
-
-    } else {
-
-      if (tree1.value == tree2.value) {
-        return true
-      }
-
-      return false
-
-    }
-  }
+  if (level == 0)
+    return levels
   
 }
 
-console.log(isTreesSynchronized(
-  { value: '🎅' },
-  { value: '🧑‍🎄' }
-))
+const levels = allocate_branches(binaryTree, 0, [])
+
+levels.forEach(element => {
+  console.log(element.join(" "))
+});
